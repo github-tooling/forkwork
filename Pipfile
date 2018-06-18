@@ -4,10 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pygithub = "*"
 requests = "*"
 click = "*"
-tqdm = "*"
+"github3.py" = "*"
+cachecontrol = "*"
+lockfile = "*"
+tabulate = "*"
 
 [dev-packages]
 "e1839a8" = {path = ".", editable = true}

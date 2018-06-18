@@ -2,4 +2,4 @@ try/
 .idea/
 forkwork.egg-info/
 forkwork/.env
-forkwork/__pycache__
+.fork_work_cache/
