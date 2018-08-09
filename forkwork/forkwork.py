@@ -75,16 +75,41 @@ def fnm(ctx):
 @click.option('-F', '--forks', 'sort', flag_value='forks_count', help='Sort by forks count')
 @click.option('-I', '--open_issues', 'sort', flag_value='open_issues_count', help='Sort by open issues count')
 @click.option('-D', '--updated_at', 'sort', flag_value='updated_at', help='Sort by updated at')
+@click.option('-P', '--pushed_at', 'sort', flag_value='pushed_at', help='Sort by updated at')
+@click.option('-C', '--commits', 'sort', flag_value='commits', help='Sort by updated at')
+@click.option('-B', '--branches', 'sort', flag_value='branches', help='Sort by updated at')
 @click.pass_context
 def top(ctx, sort, n):
     repos = []
     forks = ctx.obj['forks']
-    Repo = namedtuple('Repo', ['html_url', 'stargazers_count', 'forks_count', 'open_issues_count', 'updated_at'])
+    prop = ['html_url', 'stargazers_count', 'forks_count', 'open_issues_count', 'updated_at', 'pushed_at']
+    if sort == 'branches':
+        prop.append('branches')
+        Repo = namedtuple('Repo', prop)
+    elif sort == 'commits':
+        prop.append('commits')
+        Repo = namedtuple('Repo', prop)
+    else:
+        Repo = namedtuple('Repo', prop)
 
     for f in forks:
         cachecontrol.CacheControl(f.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
-        repos.append(Repo(f.html_url, f.stargazers_count, f.forks_count, f.open_issues_count, f.updated_at))
+        def_prop = [f.html_url, f.stargazers_count, f.forks_count, f.open_issues_count, f.updated_at, f.pushed_at]
+        if sort == 'branches':
+            def_prop.append(len(list(f.branches())))
+            repos.append(Repo(*def_prop))
+        elif sort == 'commits':
+            def_prop.append(len(list(f.commits())))
+            repos.append(Repo(*def_prop))
+        else:
+            repos.append(Repo(*def_prop))
+
     sorted_repos = sorted(repos, key=attrgetter(sort), reverse=True)
 
-    headers = ['URL', 'Stars', 'Forks', 'Open Issues', 'Last update']
+    headers = ['URL', 'Stars', 'Forks', 'Open Issues', 'Last update', 'Pushed At']
+    if sort == 'branches':
+        headers.append('Branches')
+    elif sort == 'commits':
+        headers.append('Commits')
+
     print(tabulate(sorted_repos[:n], headers=headers, tablefmt="grid"))
