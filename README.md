@@ -42,22 +42,21 @@ Commands:
 ```
 top command option
 ```
-$ forkwork https://github.com/voronind/vk top --help  
+$ forkwork https://github.com/voronind/vk top --help                
 Usage: forkwork top [OPTIONS]
 
 Options:
-  --n INTEGER        Numbers of rows
-  -S, --star         Sort by stargazers count
-  -F, --forks        Sort by forks count
-  -I, --open_issues  Sort by open issues count
-  -D, --updated_at   Sort by updated at
-  -P, --pushed_at    Sort by updated at
-  -C, --commits      Sort by updated at
-  -B, --branches     Sort by updated at
-  --help             Show this message and exit.
-
+  --n INTEGER           Numbers of rows
+  -S, --star            Sort by stargazers count
+  -F, --forks           Sort by forks count
+  -I, --open_issues     Sort by open issues count
+  -W, --watchers_count  Sort by watchers count
+  -D, --updated_at      Sort by updated at
+  -P, --pushed_at       Sort by pushed at
+  -C, --commits         Sort by number of commits
+  -B, --branches        Sort by number of branches
+  --help                Show this message and exit.
 ```
-
 
 ### Example usage
 find top repo
