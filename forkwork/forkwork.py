@@ -53,6 +53,7 @@ def fnm(ctx):
     repo_message = [j.message for j in repo_commits]
     old_login = ''
     for fork in forks:
+        # github api may return nonexistent profile
         if requests.get(fork.html_url).status_code != 404:
             for c, commit in enumerate(fork.commits(), 1):
                 if commit.message not in repo_message:
@@ -96,8 +97,11 @@ def top(ctx, sort, n):
             def_prop.append(len(list(f.branches())))
             repos.append(Repo(*def_prop))
         elif sort == 'commits':
-            def_prop.append(len(list(f.commits())))
-            repos.append(Repo(*def_prop))
+            # github api may return nonexistent profile
+            if requests.get(f.html_url).status_code != 404:
+                commits = sum([c.contributions_count for c in f.contributors()])
+                def_prop.append(commits)
+                repos.append(Repo(*def_prop))
         else:
             repos.append(Repo(*def_prop))
 
