@@ -18,6 +18,16 @@ $ python setup.py install
 
 ## Usage
 
+To prevent rale limit being exceeded for unauthentIcated requests, forkwork needs an access token.
+For public repositories, [create a token](https://github.com/settings/tokens/new?scopes=public_repo&description=forkwork) 
+with the public_repo permission.
+
+You can use token as environment variable ``FORKWORK_TOKEN`` at ``~/.bashrc`` or ``~/.zshrc`` 
+
+export FORKWORK_TOKEN="****************************************"
+
+or pass token as option --token
+
 ```
 $ forkwork --help
 Usage: forkwork [OPTIONS] URL COMMAND [ARGS]...
@@ -30,7 +40,7 @@ Commands:
   fnm
   top
 ```
-
+top command option
 ```
 $ forkwork https://github.com/voronind/vk top --help  
 Usage: forkwork top [OPTIONS]

@@ -10,12 +10,6 @@ from cachecontrol.caches import FileCache
 from cachecontrol.heuristics import BaseHeuristic
 from tabulate import tabulate
 
-try:
-    from dotenv import load_dotenv, find_dotenv
-    load_dotenv(find_dotenv())
-except ImportError:
-    pass
-
 
 class OneWeekHeuristic(BaseHeuristic):
     def update_headers(self, response):
