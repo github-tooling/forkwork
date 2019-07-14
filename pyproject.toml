@@ -5,7 +5,7 @@ description = ""
 authors = ["Andriy Orehov <andriyorehov@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.5"
 requests = "^2.22"
 click = "^7.0"
 cachecontrol = "^0.12.5"

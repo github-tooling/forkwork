@@ -13,7 +13,7 @@ Inspired by [forked](https://github.com/ys/forked)
 ```
 $ git clone https://github.com/andriyor/forkwork.git
 $ cd forkwork
-$ python3 setup.py install
+$ python setup.py install
 ```
 
 ## Usage
@@ -30,6 +30,24 @@ Commands:
   fnm
   top
 ```
+
+```
+$ forkwork https://github.com/voronind/vk top --help  
+Usage: forkwork top [OPTIONS]
+
+Options:
+  --n INTEGER        Numbers of rows
+  -S, --star         Sort by stargazers count
+  -F, --forks        Sort by forks count
+  -I, --open_issues  Sort by open issues count
+  -D, --updated_at   Sort by updated at
+  -P, --pushed_at    Sort by updated at
+  -C, --commits      Sort by updated at
+  -B, --branches     Sort by updated at
+  --help             Show this message and exit.
+
+```
+
 
 ### Example usage
 find top repo
