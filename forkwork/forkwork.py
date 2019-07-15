@@ -8,6 +8,7 @@ import cachecontrol
 from cachecontrol.caches import FileCache
 from cachecontrol.heuristics import BaseHeuristic
 from tabulate import tabulate
+from halo import Halo
 
 
 class OneWeekHeuristic(BaseHeuristic):
@@ -21,6 +22,9 @@ class OneWeekHeuristic(BaseHeuristic):
 @click.option('--token', envvar='FORKWORK_TOKEN')
 @click.pass_context
 def cli(ctx, url, token):
+    spinner = Halo(text='Login and fetch forks', spinner='dots')
+    spinner.start()
+
     if token:
         gh = github3.login(token=token)
     else:
@@ -34,6 +38,7 @@ def cli(ctx, url, token):
     cachecontrol.CacheControl(repository.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
     forks = repository.forks()
 
+    spinner.stop()
     ctx.obj = {
         'repository': repository,
         'forks': forks,
@@ -83,6 +88,9 @@ def top(ctx, sort, n):
          'watchers_count': 'Watchers', 'updated_at': 'Last update', 'pushed_at': 'Pushed At'}
     headers = list(d.values())
 
+    spinner = Halo(text='Fetch information about forks', spinner='dots')
+    spinner.start()
+
     if sort == 'branches' or sort == 'commits':
         d[sort] = sort.capitalize()
         headers.append(d[sort])
@@ -111,4 +119,5 @@ def top(ctx, sort, n):
             repos.append(Repo(*def_prop))
 
     sorted_repos = sorted(repos, key=attrgetter(sort), reverse=True)
+    spinner.stop()
     print(tabulate(sorted_repos[:n], headers=headers, tablefmt="grid"))
