@@ -9,6 +9,7 @@ from cachecontrol.caches import FileCache
 from cachecontrol.heuristics import BaseHeuristic
 from tabulate import tabulate
 from halo import Halo
+import pendulum
 
 
 class OneWeekHeuristic(BaseHeuristic):
@@ -65,9 +66,9 @@ def fnm(ctx):
                     if old_login != fork.owner.login:
                         print('\n', new_login, fork.html_url)
                         old_login = new_login
-                    print(c, commit.message, commit.html_url)
+                    click.echo(c, commit.message, commit.html_url)
         except github3.exceptions.NotFoundError:
-            print('Repository {} not found'.format(fork.html_url))
+            click.echo('Repository {} not found'.format(fork.html_url))
 
 
 @cli.command()
@@ -108,16 +109,24 @@ def top(ctx, sort, n):
                 def_prop.append(len(list(fork.branches())))
                 repos.append(Repo(*def_prop))
             except github3.exceptions.NotFoundError:
-                print('Repository {} not found'.format(fork.html_url))
+                click.echo('Repository {} not found'.format(fork.html_url))
         elif sort == 'commits':
             try:
                 def_prop.append(sum([c.contributions_count for c in fork.contributors()]))
                 repos.append(Repo(*def_prop))
             except github3.exceptions.NotFoundError:
-                print('Repository {} not found'.format(fork.html_url))
+                click.echo('Repository {} not found'.format(fork.html_url))
         else:
             repos.append(Repo(*def_prop))
 
-    sorted_repos = sorted(repos, key=attrgetter(sort), reverse=True)
+    sorted_forks = sorted(repos, key=attrgetter(sort), reverse=True)
+    humanize_dates_forks = []
+    for fork in sorted_forks[:n]:
+        days_passed_updated_at = (pendulum.now() - pendulum.parse(fork.updated_at)).days
+        days_passed_pushed_at = (pendulum.now() - pendulum.parse(fork.pushed_at)).days
+        human_updated_at = pendulum.now().subtract(days=days_passed_updated_at).diff_for_humans()
+        human_pushed_at = pendulum.now().subtract(days=days_passed_pushed_at).diff_for_humans()
+        humanize_dates_forks.append(fork._replace(updated_at=human_updated_at, pushed_at=human_pushed_at))
+
     spinner.stop()
-    print(tabulate(sorted_repos[:n], headers=headers, tablefmt="grid"))
+    click.echo(tabulate(humanize_dates_forks, headers=headers, tablefmt="grid"))
