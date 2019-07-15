@@ -2,3 +2,4 @@ try/
 .idea/
 forkwork.egg-info/
 .fork_work_cache/
+dist/

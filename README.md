@@ -4,12 +4,22 @@ This might help to find maintained alternatives of an abandoned repo.
 
 Inspired by [forked](https://github.com/ys/forked)   
 
-## Installation
 
-### Requirements
+## Requirements
 * Python 3.5 and up
 
-### Installation from source
+## Installation
+from PyPI
+```
+$ pip install forkwork
+```
+
+from git repository
+```
+$ pip install git+https://github.com/andriyor/forkwork.git
+```
+
+from source
 ```
 $ git clone https://github.com/andriyor/forkwork.git
 $ cd forkwork
@@ -61,20 +71,20 @@ Options:
 ### Example usage
 find top repo
 ```
-forkwork https://github.com/mattdiamond/Recorderjs top -F --n=5
-+-----------------------------------------------+---------+---------+---------------+----------------------+
-| URL                                           |   Stars |   Forks |   Open Issues | Last update          |
-+===============================================+=========+=========+===============+======================+
-| https://github.com/chris-rudmin/opus-recorder |     422 |      71 |             3 | 2018-06-17T01:26:41Z |
-+-----------------------------------------------+---------+---------+---------------+----------------------+
-| https://github.com/remusnegrota/Recorderjs    |      42 |      16 |             0 | 2018-06-01T21:38:53Z |
-+-----------------------------------------------+---------+---------+---------------+----------------------+
-| https://github.com/jergason/Recorderjs        |       9 |       9 |             3 | 2018-05-19T01:14:18Z |
-+-----------------------------------------------+---------+---------+---------------+----------------------+
-| https://github.com/rokgregoric/html5record    |      40 |       5 |             0 | 2017-11-06T20:23:27Z |
-+-----------------------------------------------+---------+---------+---------------+----------------------+
-| https://github.com/somnumDotIo/Recorderjs     |       0 |       2 |             0 | 2016-05-12T00:35:50Z |
-+-----------------------------------------------+---------+---------+---------------+----------------------+
+➜ poetry run forkwork https://github.com/mattdiamond/Recorderjs top -F --n=5
++-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
+| URL                                           |   Stars |   Forks |   Open Issues |   Watchers | Last update       | Pushed At    |
++===============================================+=========+=========+===============+============+===================+==============+
+| https://github.com/chris-rudmin/opus-recorder |     594 |     107 |             6 |        594 | a few seconds ago | 2 months ago |
++-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
+| https://github.com/remusnegrota/Recorderjs    |      45 |      15 |             0 |         45 | 2 months ago      | 5 years ago  |
++-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
+| https://github.com/jergason/Recorderjs        |      11 |      12 |             3 |         11 | 2 months ago      | 2 years ago  |
++-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
+| https://github.com/rokgregoric/html5record    |      41 |       7 |             0 |         41 | 8 months ago      | 7 years ago  |
++-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
+| https://github.com/somnumDotIo/Recorderjs     |       0 |       2 |             0 |          0 | 3 years ago       | 3 years ago  |
++-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
 ```
 
 find commit that don't merged and not pushed to a pull request
@@ -103,8 +113,20 @@ Same functionality is available with
 a ?where={"_udpated": {"$gt": "<RFC1123 date>"}} request. https://github.com/wdtbrno/eve-mongoengine/commit/9cb2ac3abbc210f37daff98bf5c6a3e638aeeb84
 ```
 
-## Development
+
+## Development setup
 Install [Pipenv](https://docs.pipenv.org/)   
 ```
 $ pipenv install --dev -e .
 ```
+or [Poetry](https://poetry.eustace.io/docs/)   
+```
+$ poetry install
+```
+run tests
+```
+$ poetry run pytest
+```
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)

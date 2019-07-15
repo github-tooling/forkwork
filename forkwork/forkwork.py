@@ -1,6 +1,9 @@
 from urllib.parse import urlparse
 from operator import attrgetter
 from collections import namedtuple
+import calendar
+from datetime import datetime, timedelta
+from email.utils import parsedate, formatdate
 
 import click
 import github3
@@ -12,10 +15,19 @@ from halo import Halo
 import pendulum
 
 
-class OneWeekHeuristic(BaseHeuristic):
+class OneDayHeuristic(BaseHeuristic):
+
     def update_headers(self, response):
-        seconds_in_week = 604800
-        return {'Cache-Control': f'private, max-age={seconds_in_week}, s-maxage={seconds_in_week}'}
+        date = parsedate(response.headers['date'])
+        expires = datetime(*date[:6]) + timedelta(days=1)
+        return {
+            'expires': formatdate(calendar.timegm(expires.timetuple())),
+            'cache-control': 'public',
+        }
+
+    def warning(self, response):
+        msg = 'Automatically cached! Response is Stale.'
+        return '110 - "%s"' % msg
 
 
 @click.group()
@@ -32,11 +44,11 @@ def cli(ctx, url, token):
         user = click.prompt('username', hide_input=False, confirmation_prompt=False)
         password = click.prompt('Password', hide_input=True, confirmation_prompt=True)
         gh = github3.login(user, password=password)
-    cachecontrol.CacheControl(gh.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
+    cachecontrol.CacheControl(gh.session, cache=FileCache('.fork_work_cache'), heuristic=OneDayHeuristic())
 
     login, repo = urlparse(url).path[1:].split('/')
     repository = gh.repository(login, repo)
-    cachecontrol.CacheControl(repository.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
+    cachecontrol.CacheControl(repository.session, cache=FileCache('.fork_work_cache'), heuristic=OneDayHeuristic())
     forks = repository.forks()
 
     spinner.stop()
@@ -53,7 +65,7 @@ def fnm(ctx):
     forks = ctx.obj['forks']
 
     repo_commits = repository.commits()
-    cachecontrol.CacheControl(repo_commits.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
+    cachecontrol.CacheControl(repo_commits.session, cache=FileCache('.fork_work_cache'), heuristic=OneDayHeuristic())
 
     repo_message = [j.message for j in repo_commits]
     old_login = ''
@@ -100,7 +112,7 @@ def top(ctx, sort, n):
         Repo = namedtuple('Repo', list(d.keys()))
 
     for fork in forks:
-        cachecontrol.CacheControl(fork.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
+        cachecontrol.CacheControl(fork.session, cache=FileCache('.fork_work_cache'), heuristic=OneDayHeuristic())
         def_prop = [fork.html_url, fork.stargazers_count, fork.forks_count, fork.open_issues_count,
                     fork.watchers_count, fork.updated_at, fork.pushed_at]
         # github api may return nonexistent profile
