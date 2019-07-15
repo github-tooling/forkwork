@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 from operator import attrgetter
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import calendar
 from datetime import datetime, timedelta
 from email.utils import parsedate, formatdate
@@ -97,8 +97,9 @@ def fnm(ctx):
 def top(ctx, sort, n):
     repos = []
     forks = ctx.obj['forks']
-    d = {'html_url': 'URL', 'stargazers_count': 'Stars', 'forks_count': 'Forks', 'open_issues_count': 'Open Issues',
-         'watchers_count': 'Watchers', 'updated_at': 'Last update', 'pushed_at': 'Pushed At'}
+    d = OrderedDict([('html_url', 'URL'), ('stargazers_count', 'Stars'), ('forks_count', 'Forks'),
+                     ('open_issues_count', 'Open Issues'), ('watchers_count', 'Watchers'),
+                     ('updated_at', 'Last update'), ('pushed_at', 'Pushed At')])
     headers = list(d.values())
 
     spinner = Halo(text='Fetch information about forks', spinner='dots')
