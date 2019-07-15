@@ -3,7 +3,6 @@ from operator import attrgetter
 from collections import namedtuple
 
 import click
-import requests
 import github3
 import cachecontrol
 from cachecontrol.caches import FileCache
@@ -54,7 +53,7 @@ def fnm(ctx):
     old_login = ''
     for fork in forks:
         # github api may return nonexistent profile
-        if requests.get(fork.html_url).status_code != 404:
+        try:
             for c, commit in enumerate(fork.commits(), 1):
                 if commit.message not in repo_message:
                     new_login = fork.owner.login
@@ -62,6 +61,8 @@ def fnm(ctx):
                         print('\n', new_login, fork.html_url)
                         old_login = new_login
                     print(c, commit.message, commit.html_url)
+        except github3.exceptions.NotFoundError:
+            print('Repository {} not found'.format(fork.html_url))
 
 
 @cli.command()
@@ -78,39 +79,36 @@ def fnm(ctx):
 def top(ctx, sort, n):
     repos = []
     forks = ctx.obj['forks']
-    prop = ['html_url', 'stargazers_count', 'forks_count', 'open_issues_count',
-            'watchers_count', 'updated_at', 'pushed_at']
-    if sort == 'branches':
-        prop.append('branches')
-        Repo = namedtuple('Repo', prop)
-    elif sort == 'commits':
-        prop.append('commits')
-        Repo = namedtuple('Repo', prop)
-    else:
-        Repo = namedtuple('Repo', prop)
+    d = {'html_url': 'URL', 'stargazers_count': 'Stars', 'forks_count': 'Forks', 'open_issues_count': 'Open Issues',
+         'watchers_count': 'Watchers', 'updated_at': 'Last update', 'pushed_at': 'Pushed At'}
+    headers = list(d.values())
 
-    for f in forks:
-        cachecontrol.CacheControl(f.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
-        def_prop = [f.html_url, f.stargazers_count, f.forks_count, f.open_issues_count,
-                    f.watchers_count, f.updated_at, f.pushed_at]
+    if sort == 'branches' or sort == 'commits':
+        d[sort] = sort.capitalize()
+        headers.append(d[sort])
+        Repo = namedtuple('Repo', list(d.keys()))
+    else:
+        Repo = namedtuple('Repo', list(d.keys()))
+
+    for fork in forks:
+        cachecontrol.CacheControl(fork.session, cache=FileCache('.fork_work_cache'), heuristic=OneWeekHeuristic())
+        def_prop = [fork.html_url, fork.stargazers_count, fork.forks_count, fork.open_issues_count,
+                    fork.watchers_count, fork.updated_at, fork.pushed_at]
+        # github api may return nonexistent profile
         if sort == 'branches':
-            def_prop.append(len(list(f.branches())))
-            repos.append(Repo(*def_prop))
-        elif sort == 'commits':
-            # github api may return nonexistent profile
-            if requests.get(f.html_url).status_code != 404:
-                commits = sum([c.contributions_count for c in f.contributors()])
-                def_prop.append(commits)
+            try:
+                def_prop.append(len(list(fork.branches())))
                 repos.append(Repo(*def_prop))
+            except github3.exceptions.NotFoundError:
+                print('Repository {} not found'.format(fork.html_url))
+        elif sort == 'commits':
+            try:
+                def_prop.append(sum([c.contributions_count for c in fork.contributors()]))
+                repos.append(Repo(*def_prop))
+            except github3.exceptions.NotFoundError:
+                print('Repository {} not found'.format(fork.html_url))
         else:
             repos.append(Repo(*def_prop))
 
     sorted_repos = sorted(repos, key=attrgetter(sort), reverse=True)
-
-    headers = ['URL', 'Stars', 'Forks', 'Open Issues', 'Watchers', 'Last update', 'Pushed At']
-    if sort == 'branches':
-        headers.append('Branches')
-    elif sort == 'commits':
-        headers.append('Commits')
-
     print(tabulate(sorted_repos[:n], headers=headers, tablefmt="grid"))

@@ -181,8 +181,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
 version = "1.25.3"
 
 [metadata]
-content-hash = "4faad607ea3f44a325996f59e9aac3240d5123b76a2fb14517260f2bbae05f53"
-python-versions = "^3.6"
+content-hash = "3bb8123460530756b7207b637881f7a1fcdd1a42da14dc318ba73145a4e7a063"
+python-versions = "^3.5"
 
 [metadata.hashes]
 asn1crypto = ["2f1adbb7546ed199e3c90ef23ec95c5cf3585bac7d11fb7eb562a3fe89c64e87", "9d5c20441baf0cb60a4ac34cc447c6c189024b6b4c6cd7877034f4965c464e49"]
