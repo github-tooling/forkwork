@@ -1,4 +1,7 @@
 # Forkwork
+[![image](https://img.shields.io/pypi/v/forkwork.svg)](https://pypi.org/project/forkwork/)
+[![image](https://img.shields.io/pypi/l/forkwork.svg)](https://pypi.org/project/forkwork/)
+[![image](https://img.shields.io/pypi/pyversions/forkwork.svg)](https://pypi.org/project/forkwork/)
 
 This might help to find maintained alternatives of an abandoned repo.
 
@@ -16,12 +19,12 @@ $ pip install forkwork
 
 from git repository
 ```
-$ pip install git+https://github.com/andriyor/forkwork.git
+$ pip install git+https://github.com/github-tooling/forkwork
 ```
 
 from source
 ```
-$ git clone https://github.com/andriyor/forkwork.git
+$ git clone https://github.com/github-tooling/forkwork
 $ cd forkwork
 $ python setup.py install
 ```
@@ -122,10 +125,6 @@ $ pipenv install --dev -e .
 or [Poetry](https://poetry.eustace.io/docs/)   
 ```
 $ poetry install
-```
-run tests
-```
-$ poetry run pytest
 ```
 
 ## License
