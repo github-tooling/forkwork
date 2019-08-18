@@ -55,7 +55,8 @@ Commands:
 ```
 top command option
 ```
-$ forkwork https://github.com/voronind/vk top --help                
+$  forkwork https://github.com/mattdiamond/Recorderjs top --help
+
 Usage: forkwork top [OPTIONS]
 
 Options:
@@ -63,31 +64,34 @@ Options:
   -S, --star            Sort by stargazers count
   -F, --forks           Sort by forks count
   -I, --open_issues     Sort by open issues count
-  -W, --watchers_count  Sort by watchers count
   -D, --updated_at      Sort by updated at
   -P, --pushed_at       Sort by pushed at
-  -C, --commits         Sort by number of commits
-  -B, --branches        Sort by number of branches
+  -W, --watchers_count  Sort by watchers count (Slow because requires an
+                        additional request per fork)
+  -C, --commits         Sort by number of commits (Slow because requires an
+                        additional requests per fork)
+  -B, --branches        Sort by number of branches (Slow because requires an
+                        additional request per fork)
   --help                Show this message and exit.
 ```
 
 ### Example usage
 find top repo
 ```
-➜ poetry run forkwork https://github.com/mattdiamond/Recorderjs top -F --n=5
-+-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
-| URL                                           |   Stars |   Forks |   Open Issues |   Watchers | Last update       | Pushed At    |
-+===============================================+=========+=========+===============+============+===================+==============+
-| https://github.com/chris-rudmin/opus-recorder |     594 |     107 |             6 |        594 | a few seconds ago | 2 months ago |
-+-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
-| https://github.com/remusnegrota/Recorderjs    |      45 |      15 |             0 |         45 | 2 months ago      | 5 years ago  |
-+-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
-| https://github.com/jergason/Recorderjs        |      11 |      12 |             3 |         11 | 2 months ago      | 2 years ago  |
-+-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
-| https://github.com/rokgregoric/html5record    |      41 |       7 |             0 |         41 | 8 months ago      | 7 years ago  |
-+-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
-| https://github.com/somnumDotIo/Recorderjs     |       0 |       2 |             0 |          0 | 3 years ago       | 3 years ago  |
-+-----------------------------------------------+---------+---------+---------------+------------+-------------------+--------------+
+$ forkwork https://github.com/mattdiamond/Recorderjs top -S --n=5
++-----------------------------------------------+---------+---------+---------------+---------------+--------------+
+| URL                                           |   Stars |   Forks |   Open Issues | Last update   | Pushed At    |
++===============================================+=========+=========+===============+===============+==============+
+| https://github.com/chris-rudmin/opus-recorder |     599 |     110 |             6 | 5 days ago    | 3 months ago |
++-----------------------------------------------+---------+---------+---------------+---------------+--------------+
+| https://github.com/remusnegrota/Recorderjs    |      45 |      15 |             0 | 3 months ago  | 5 years ago  |
++-----------------------------------------------+---------+---------+---------------+---------------+--------------+
+| https://github.com/rokgregoric/html5record    |      41 |       7 |             0 | 9 months ago  | 7 years ago  |
++-----------------------------------------------+---------+---------+---------------+---------------+--------------+
+| https://github.com/mayppong/Recorderjs        |      11 |       2 |             0 | 1 year ago    | 5 years ago  |
++-----------------------------------------------+---------+---------+---------------+---------------+--------------+
+| https://github.com/jergason/Recorderjs        |      11 |      12 |             3 | 3 months ago  | 2 years ago  |
++-----------------------------------------------+---------+---------+---------------+---------------+--------------+
 ```
 
 find commit that don't merged and not pushed to a pull request
@@ -118,13 +122,13 @@ a ?where={"_udpated": {"$gt": "<RFC1123 date>"}} request. https://github.com/wdt
 
 
 ## Development setup
-Install [Pipenv](https://docs.pipenv.org/)   
-```
-$ pipenv install --dev -e .
-```
-or [Poetry](https://poetry.eustace.io/docs/)   
+Using [Poetry](https://poetry.eustace.io/docs/)   
 ```
 $ poetry install
+```
+or [Pipenv](https://docs.pipenv.org/)   
+```
+$ pipenv install --dev -e .
 ```
 
 ## License

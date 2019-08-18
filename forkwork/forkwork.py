@@ -55,6 +55,7 @@ def cli(ctx, url, token):
     ctx.obj = {
         'repository': repository,
         'forks': forks,
+        'gh': gh,
     }
 
 
@@ -88,24 +89,25 @@ def fnm(ctx):
 @click.option('-S', '--star', 'sort', flag_value='stargazers_count', default=True, help='Sort by stargazers count')
 @click.option('-F', '--forks', 'sort', flag_value='forks_count', help='Sort by forks count')
 @click.option('-I', '--open_issues', 'sort', flag_value='open_issues_count', help='Sort by open issues count')
-@click.option('-W', '--watchers_count', 'sort', flag_value='watchers_count', help='Sort by watchers count')
 @click.option('-D', '--updated_at', 'sort', flag_value='updated_at', help='Sort by updated at')
 @click.option('-P', '--pushed_at', 'sort', flag_value='pushed_at', help='Sort by pushed at')
-@click.option('-C', '--commits', 'sort', flag_value='commits', help='Sort by number of commits')
-@click.option('-B', '--branches', 'sort', flag_value='branches', help='Sort by number of branches')
+@click.option('-W', '--watchers_count', 'sort', flag_value='watchers', help='Sort by watchers count (Slow because requires an additional request per fork)')
+@click.option('-C', '--commits', 'sort', flag_value='commits', help='Sort by number of commits (Slow because requires an additional requests per fork)')
+@click.option('-B', '--branches', 'sort', flag_value='branches', help='Sort by number of branches (Slow because requires an additional request per fork)')
 @click.pass_context
 def top(ctx, sort, n):
     repos = []
     forks = ctx.obj['forks']
+    gh = ctx.obj['gh']
     d = OrderedDict([('html_url', 'URL'), ('stargazers_count', 'Stars'), ('forks_count', 'Forks'),
-                     ('open_issues_count', 'Open Issues'), ('watchers_count', 'Watchers'),
+                     ('open_issues_count', 'Open Issues'),
                      ('updated_at', 'Last update'), ('pushed_at', 'Pushed At')])
     headers = list(d.values())
 
     spinner = Halo(text='Fetch information about forks', spinner='dots')
     spinner.start()
 
-    if sort == 'branches' or sort == 'commits':
+    if sort == 'branches' or sort == 'commits' or sort == 'watchers':
         d[sort] = sort.capitalize()
         headers.append(d[sort])
         Repo = namedtuple('Repo', list(d.keys()))
@@ -115,11 +117,18 @@ def top(ctx, sort, n):
     for fork in forks:
         cachecontrol.CacheControl(fork.session, cache=FileCache('.fork_work_cache'), heuristic=OneDayHeuristic())
         def_prop = [fork.html_url, fork.stargazers_count, fork.forks_count, fork.open_issues_count,
-                    fork.watchers_count, fork.updated_at, fork.pushed_at]
+                    fork.updated_at, fork.pushed_at]
         # github api may return nonexistent profile
         if sort == 'branches':
             try:
                 def_prop.append(len(list(fork.branches())))
+                repos.append(Repo(*def_prop))
+            except github3.exceptions.NotFoundError:
+                click.echo('Repository {} not found'.format(fork.html_url))
+        elif sort == 'watchers':
+            try:
+                repo = gh.repository(fork.owner.login, fork.name)
+                def_prop.append(repo.subscribers_count)
                 repos.append(Repo(*def_prop))
             except github3.exceptions.NotFoundError:
                 click.echo('Repository {} not found'.format(fork.html_url))

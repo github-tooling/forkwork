@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "forkwork"
-version = "0.0.3"
+version = "0.0.4"
 description = "Find maintained forks of your favorite repositories"
 authors = ["Andriy Orehov <andriyorehov@gmail.com>"]
 license = "MIT"
