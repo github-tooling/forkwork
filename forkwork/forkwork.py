@@ -51,19 +51,17 @@ def cli(ctx, url, token):
     forks = repository.forks()
 
     spinner.stop()
-    ctx.obj = {"repository": repository, "forks": forks, "gh": gh}
+    RepoCtx = namedtuple("Repo", ["repository", "forks", "gh"])
+    ctx.obj = RepoCtx(repo, forks, gh)
 
 
 @cli.command()
-@click.pass_context
-def fnm(ctx):
-    repository = ctx.obj["repository"]
-    forks = ctx.obj["forks"]
-
-    repo_commits = repository.commits()
+@click.pass_obj
+def fnm(repo_ctx):
+    repo_commits = repo_ctx.repository.commits()
     repo_message = [repo_commit.message for repo_commit in repo_commits]
     old_login = ""
-    for fork in forks:
+    for fork in repo_ctx.forks:
         # github api may return nonexistent profile
         try:
             for index, commit in enumerate(fork.commits(), 1):
@@ -90,11 +88,9 @@ def fnm(ctx):
                                                                     "an additional requests per fork)")
 @click.option("-B", "--branches", "sort", flag_value="branches", help="Sort by number of branches (Slow because "
                                                                       "requires an additional request per fork)")
-@click.pass_context
-def top(ctx, sort, rows):
+@click.pass_obj
+def top(repo_ctx, sort, rows):
     repos = []
-    forks = ctx.obj["forks"]
-    gh = ctx.obj["gh"]
     columns = OrderedDict(
         [
             ("html_url", "URL"),
@@ -117,7 +113,7 @@ def top(ctx, sort, rows):
     else:
         Repo = namedtuple("Repo", list(columns.keys()))
 
-    for fork in forks:
+    for fork in repo_ctx.forks:
         def_prop = [
             fork.html_url,
             fork.stargazers_count,
@@ -135,7 +131,7 @@ def top(ctx, sort, rows):
                 click.echo("\nRepository {0} not found".format(fork.html_url))
         elif sort == "watchers":
             try:
-                repo = gh.repository(fork.owner.login, fork.name)
+                repo = repo_ctx.gh.repository(fork.owner.login, fork.name)
                 def_prop.append(repo.subscribers_count)
                 repos.append(Repo(*def_prop))
             except github3.exceptions.NotFoundError:

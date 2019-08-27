@@ -60,7 +60,7 @@ $  forkwork https://github.com/mattdiamond/Recorderjs top --help
 Usage: forkwork top [OPTIONS]
 
 Options:
-  --n INTEGER           Numbers of rows
+  --rows INTEGER        Numbers of rows
   -S, --star            Sort by stargazers count
   -F, --forks           Sort by forks count
   -I, --open_issues     Sort by open issues count
@@ -78,7 +78,7 @@ Options:
 ### Example usage
 find top repo
 ```
-$ forkwork https://github.com/mattdiamond/Recorderjs top -S --n=5
+$ forkwork https://github.com/mattdiamond/Recorderjs top -S --rows=5
 +-----------------------------------------------+---------+---------+---------------+---------------+--------------+
 | URL                                           |   Stars |   Forks |   Open Issues | Last update   | Pushed At    |
 +===============================================+=========+=========+===============+===============+==============+

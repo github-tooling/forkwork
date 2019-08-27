@@ -3,3 +3,4 @@ try/
 forkwork.egg-info/
 .fork_work_cache/
 dist/
+forkwork/__pycache__/
