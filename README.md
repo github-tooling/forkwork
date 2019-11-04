@@ -1,4 +1,5 @@
 # Forkwork
+
 [![image](https://img.shields.io/pypi/v/forkwork.svg)](https://pypi.org/project/forkwork/)
 [![image](https://img.shields.io/pypi/l/forkwork.svg)](https://pypi.org/project/forkwork/)
 [![image](https://img.shields.io/pypi/pyversions/forkwork.svg)](https://pypi.org/project/forkwork/)
@@ -9,20 +10,25 @@ Inspired by [forked](https://github.com/ys/forked)
 
 
 ## Requirements
+
 * Python 3.5 and up
 
 ## Installation
+
 from PyPI
+
 ```
 $ pip install forkwork
 ```
 
 from git repository
+
 ```
 $ pip install git+https://github.com/github-tooling/forkwork
 ```
 
 from source
+
 ```
 $ git clone https://github.com/github-tooling/forkwork
 $ cd forkwork
@@ -37,9 +43,11 @@ with the public_repo permission.
 
 You can use token as environment variable ``FORKWORK_TOKEN`` at ``~/.bashrc`` or ``~/.zshrc`` 
 
+```bash
 export FORKWORK_TOKEN="****************************************"
+```
 
-or pass token as option --token
+or pass token as option `--token`
 
 ```
 $ forkwork --help
@@ -53,7 +61,9 @@ Commands:
   fnm
   top
 ```
+
 top command option
+
 ```
 $  forkwork https://github.com/mattdiamond/Recorderjs top --help
 
@@ -76,7 +86,9 @@ Options:
 ```
 
 ### Example usage
+
 find top repo
+
 ```
 $ forkwork https://github.com/mattdiamond/Recorderjs top -S --rows=5
 +-----------------------------------------------+---------+---------+---------------+---------------+--------------+
@@ -95,6 +107,7 @@ $ forkwork https://github.com/mattdiamond/Recorderjs top -S --rows=5
 ```
 
 find commit that don't merged and not pushed to a pull request
+
 ```
 $ forkwork https://github.com/dimka665/vk fnm
 
@@ -122,14 +135,19 @@ a ?where={"_udpated": {"$gt": "<RFC1123 date>"}} request. https://github.com/wdt
 
 
 ## Development setup
+
 Using [Poetry](https://poetry.eustace.io/docs/)   
+
 ```
 $ poetry install
 ```
+
 or [Pipenv](https://docs.pipenv.org/)   
+
 ```
 $ pipenv install --dev -e .
 ```
 
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)
